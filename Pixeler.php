@@ -13,8 +13,8 @@
 
 class Pixeler {
 
-  public static function image($image_url, $resize_factor = 1.0, $invert = false){
-    return new PixelerImage($image_url, $resize_factor, $invert);
+  public static function image($image_url, $resize_factor = 1.0, $invert = false, $weight = 0.5){
+    return new PixelerImage($image_url, $resize_factor, $invert, $weight);
   }
 
   public static function dots($width, $height){
@@ -30,28 +30,28 @@ class PixelerMatrix {
             $size = 0;
   
   public function __construct($width,$height){
-    $this->width    = 2*ceil($width/2);
-    $this->height   = 4*ceil($height/4);
+    $this->width    = 2 * ceil($width/2);
+    $this->height   = 4 * ceil($height/4);
     $this->size     = $this->width * $this->height;
-    $this->matrix   = new SplFixedArray($this->size);
+    $this->matrix   = new \SplFixedArray($this->size);
   }
   
   public function setPixel($x, $y, $value){
     if ( $x < $this->width && $y < $this->height) {
-      $this->matrix[$x+$y*$this->height] = !!$value;
+      $this->matrix[$x + $y * $this->width] = !! $value;
     }
   }
 
   public function getPixel($x, $y){
     if ( $x < $this->width && $y < $this->height) {
-      return $this->matrix[$x+$y*$this->height];
+      return $this->matrix[$x + $y * $this->width];
     } else {
       return false;
     }
   }
 
   public function render(){
-    $buff = '';
+    $buff = [];
     for ($y = 0; $y < $this->height; $y += 4){
       for ($x = 0; $x < $this->width; $x += 2){
         $cell = 0;
@@ -65,11 +65,11 @@ class PixelerMatrix {
         if ($this->getPixel($x1, $y1)) $cell |= 0x10;
         if ($this->getPixel($x1, $y2)) $cell |= 0x04;
         if ($this->getPixel($x1, $y3)) $cell |= 0x01;
-        $buff .= static::dots($cell);
+        $buff[] = static::dots($cell);
       }
-      $buff .= "\n";
+      $buff[] = "\n";
     }
-    return $buff;
+    return implode('',$buff);
   }
 
   public function __toString(){
@@ -95,18 +95,18 @@ class PixelerMatrix {
 
 
 class PixelerImage extends PixelerMatrix {
-  protected $image;
   
-  public function __construct($img, $resize=1.0, $invert=false){
+  public function __construct($img, $resize=1.0, $invert=false, $weight = 0.5){
     $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
     if ($ext == 'jpg') $ext = 'jpeg';
     $creator = 'imagecreatefrom'.$ext;
-    if (!function_exists($creator)) throw new Exception("Image format not supported.", 1);
+    if (!function_exists($creator)) throw new \Exception("Image format not supported.", 1);
     
     $im = $creator($img);
     $w = imagesx($im);
     $h = imagesy($im);
 
+    
     // Resize image
     if ( $resize != 1.0 ){
       $nw = ceil($resize*$w);
@@ -120,6 +120,8 @@ class PixelerImage extends PixelerMatrix {
       $im = $new_img;
       $w = $nw; $h = $nh;
     }
+    
+
 
     parent::__construct($w,$h);
 
@@ -127,34 +129,37 @@ class PixelerImage extends PixelerMatrix {
     if ($invert) imagefilter($im, IMG_FILTER_NEGATE);
 
     // 1-bit Atkinson dither
-    // https://gist.github.com/lordastley/1342627
+    // Adapted from : https://gist.github.com/lordastley/1342627
 
-    $pixels = [];
+    $pixels = new \SplFixedArray($w * $h);
     for($y=0; $y < $h; $y++){
         for($x=0; $x < $w; $x++){
-            $pixels[$x][$y] = imagecolorat($im, $x, $y);
+            $pixels[$x + $y * $w] = imagecolorat($im, $x, $y);
         }
     }
     imagedestroy($im);
 
     $c1_8 = 1/8;
-    $tresh = (0xffffff * 0.5) & 0xffffff;
+    $tresh = (0xffffff * $weight) & 0xffffff;
     for ($y=0; $y < $h; $y++){
         for ($x=0; $x < $w; $x++){
-            $old = $pixels[$x][$y];
+            $old = $pixels[$x + $y * $w];
             if ($old > $tresh){
                 $new = 0xffffff;
             } else {
                 $new = 0x000000;
                 $this->setPixel($x, $y, 1);
             }
+            
             $error_diffusion = $c1_8 * ($old - $new);
-            if (isset($pixels[$x+1][$y  ])) $pixels[$x+1][$y  ] += $error_diffusion;
-            if (isset($pixels[$x+2][$y  ])) $pixels[$x+2][$y  ] += $error_diffusion;
-            if (isset($pixels[$x-1][$y+1])) $pixels[$x-1][$y+1] += $error_diffusion;
-            if (isset($pixels[$x  ][$y+1])) $pixels[$x  ][$y+1] += $error_diffusion;
-            if (isset($pixels[$x+1][$y+1])) $pixels[$x+1][$y+1] += $error_diffusion;
-            if (isset($pixels[$x  ][$y+2])) $pixels[$x  ][$y+2] += $error_diffusion;
+            
+            $x1 = $x + 1; $x2 = $x + 2;$x_1 = $x - 1;
+            $y1 = ($y + 1)*$w; $y2 = ($y + 2)*$w;
+            
+            foreach([$x1 + $y, $x2 + $y, $x_1 + $y1, $x + $y1, $x1 + $y1, $x + $y2] as $ofs) {
+              if (isset($pixels[$ofs])) $pixels[$ofs] += $error_diffusion;
+            }
+            
         }
     }   
   }
