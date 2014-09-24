@@ -68,17 +68,20 @@ Create a file `pixeler.php` :
 // Vendors
 include __DIR__."/vendor/autoload.php";
 
-// Resize factor 1.0 = 100%
-$resize = (isset($argv[2]) ? $argv[2] * 1.0 : 1.0);
+$opts = array_merge([
+	'f' => false,
+	// Resize factor 1.0 = 100%
+	'r' => 1.0,
+	// Dither treshold weight
+	'w' => 0.75,
+], getopt("f:r:w:i"));
 
-// If true invert the image colors
-$invert = (isset($argv[3]) ? $argv[3] == '-i' : false);
+$opts['f'] or die("Must specify an image file.\n");
 
 // The PixelerImage instance render itself if casted to a string
-echo Pixeler::image($argv[1], $resize, $invert);
-
+echo Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
 ```
 
-```
-$ php pixeler.php lastguest.png 0.25 -i
+```bash
+$ php pixeler.php -f http://blog.circleci.com/wp-content/uploads/2014/07/elephant.jpg -r 0.3 -w 0.5
 ```
