@@ -113,25 +113,30 @@ class PixelerImage extends PixelerMatrix {
   public function __construct($img, $resize=1.0, $invert=false, $weight = 0.5){
     $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
     if ($ext == 'jpg') $ext = 'jpeg';
-    $creator = 'imagecreatefrom'.$ext;
+    $imagecreator = 'imagecreatefrom' . $ext;
 
-    if (!function_exists($creator)) throw new \Exception("Image format not supported.", 1);
+    if (!function_exists($imagecreator)) throw new \Exception("Image format not supported.", 1);
     
-    $im = $creator($img);
-    $w = imagesx($im);
-    $h = imagesy($im);
+    $im = $imagecreator($img);
+    $w  = imagesx($im);
+    $h  = imagesy($im);
 
     
     // Resize image
     if ( $resize != 1.0 ){
-      $nw = ceil($resize * $w);
-      $nh = ceil($resize * $h);
+      $nw      = ceil($resize * $w);
+      $nh      = ceil($resize * $h);
       $new_img = imagecreatetruecolor($nw, $nh);
+      
       imagesavealpha($new_img, true);
       imagealphablending($new_img, false);
-      imagefill($new_img, 0, 0, imagecolorallocate($new_img,255,255,255));
-      imagecopyresized($new_img,$im,0,0,0,0,$nw,$nh,$w,$h);
+      
+      imagefill($new_img, 0, 0, imagecolorallocate($new_img, 255, 255, 255));
+      
+      imagecopyresized($new_img, $im, 0, 0, 0, 0, $nw, $nh, $w, $h);
+      
       imagedestroy($im);
+      
       $im = $new_img;
       $w = $nw; $h = $nh;
     }
