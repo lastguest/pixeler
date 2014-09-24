@@ -25,9 +25,9 @@ class Pixeler {
 
 class PixelerMatrix {
   protected $matrix = [],
-            $width = 0,
+            $width  = 0,
             $height = 0,
-            $size = 0;
+            $size   = 0;
   
   public function __construct($width,$height){
     $this->width    = 2 * ceil($width/2);
@@ -52,19 +52,27 @@ class PixelerMatrix {
 
   public function render(){
     $buff = [];
+    $w = $this->width;
     for ($y = 0; $y < $this->height; $y += 4){
+      $y0 = $y * $w; $y1 = ($y + 1) * $w; $y2 = ($y + 2) * $w; $y3 = ($y + 3) * $w;
       for ($x = 0; $x < $this->width; $x += 2){
         $cell = 0;
-        $x1 = $x + 1;
-        $y1 = $y + 1; $y2 = $y + 2; $y3 = $y + 3;
-        if ($this->getPixel($x , $y )) $cell  = 0x80;
-        if ($this->getPixel($x , $y1)) $cell |= 0x20;
-        if ($this->getPixel($x , $y2)) $cell |= 0x08;
-        if ($this->getPixel($x , $y3)) $cell |= 0x02;
-        if ($this->getPixel($x1, $y )) $cell |= 0x40;
-        if ($this->getPixel($x1, $y1)) $cell |= 0x10;
-        if ($this->getPixel($x1, $y2)) $cell |= 0x04;
-        if ($this->getPixel($x1, $y3)) $cell |= 0x01;
+        $x1   = $x + 1;
+
+        foreach([
+          0x01 => $x1 + $y3,
+          0x02 => $x  + $y3,
+          0x04 => $x1 + $y2,
+          0x08 => $x  + $y2,
+          0x10 => $x1 + $y1,
+          0x20 => $x  + $y1,
+          0x40 => $x1 + $y0,
+          0x80 => $x  + $y0,
+        ] as $bit => $ofs) {
+
+          if(!empty($this->matrix[$ofs])) $cell |= $bit;
+        }
+
         $buff[] = static::dots($cell);
       }
       $buff[] = "\n";
@@ -78,6 +86,7 @@ class PixelerMatrix {
 
   protected static function dots($dots){
     $dots_r = 0x2800;
+
     if ($dots & 0x80) $dots_r |= 0x01;
     if ($dots & 0x40) $dots_r |= 0x08;
     if ($dots & 0x20) $dots_r |= 0x02;
@@ -86,9 +95,14 @@ class PixelerMatrix {
     if ($dots & 0x04) $dots_r |= 0x20;
     if ($dots & 0x02) $dots_r |= 0x40;
     if ($dots & 0x01) $dots_r |= 0x80;
-    return chr(224 + (($dots_r - ($dots_r % 4096)) / 4096))
-         . chr(128 + ((($dots_r % 4096) - ($dots_r % 64)) / 64))
-         . chr(128 + ($dots_r % 64)); 
+
+    $dots_r_64   = $dots_r % 64;
+    $dots_r_4096 = $dots_r % 4096;
+
+    // Print UTF-8 character
+    return chr(224 + (($dots_r - $dots_r_4096) >> 12 ))
+         . chr(128 + (($dots_r_4096 - $dots_r_64) >> 6 ))
+         . chr(128 + $dots_r_64); 
   }
 
 }
@@ -100,6 +114,7 @@ class PixelerImage extends PixelerMatrix {
     $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
     if ($ext == 'jpg') $ext = 'jpeg';
     $creator = 'imagecreatefrom'.$ext;
+
     if (!function_exists($creator)) throw new \Exception("Image format not supported.", 1);
     
     $im = $creator($img);
@@ -109,20 +124,19 @@ class PixelerImage extends PixelerMatrix {
     
     // Resize image
     if ( $resize != 1.0 ){
-      $nw = ceil($resize*$w);
-      $nh = ceil($resize*$h);
+      $nw = ceil($resize * $w);
+      $nh = ceil($resize * $h);
       $new_img = imagecreatetruecolor($nw, $nh);
-      imagealphablending($new_img, false);
       imagesavealpha($new_img, true);
+      imagealphablending($new_img, false);
       imagefill($new_img, 0, 0, imagecolorallocate($new_img,255,255,255));
       imagecopyresized($new_img,$im,0,0,0,0,$nw,$nh,$w,$h);
       imagedestroy($im);
       $im = $new_img;
       $w = $nw; $h = $nh;
     }
-    
 
-
+    // Init Dot Matrix
     parent::__construct($w,$h);
 
     imagefilter($im, IMG_FILTER_GRAYSCALE);
@@ -142,21 +156,22 @@ class PixelerImage extends PixelerMatrix {
     $c1_8 = 1/8;
     $tresh = (0xffffff * $weight) & 0xffffff;
     for ($y=0; $y < $h; $y++){
+        $y0 = $y * $w; $y1 = ($y + 1) * $w; $y2 = ($y + 2) * $w;
         for ($x=0; $x < $w; $x++){
             $old = $pixels[$x + $y * $w];
+
             if ($old > $tresh){
                 $new = 0xffffff;
             } else {
                 $new = 0x000000;
-                $this->setPixel($x, $y, 1);
+                $this->matrix[$x + $y0] = true;
             }
             
             $error_diffusion = $c1_8 * ($old - $new);
             
-            $x1 = $x + 1; $x2 = $x + 2;$x_1 = $x - 1;
-            $y1 = ($y + 1)*$w; $y2 = ($y + 2)*$w;
+            $x1 = $x + 1; $x2 = $x + 2; $x_1 = $x - 1;
             
-            foreach([$x1 + $y, $x2 + $y, $x_1 + $y1, $x + $y1, $x1 + $y1, $x + $y2] as $ofs) {
+            foreach([$x1 + $y0, $x2 + $y0, $x_1 + $y1, $x + $y1, $x1 + $y1, $x + $y2] as $ofs) {
               if (isset($pixels[$ofs])) $pixels[$ofs] += $error_diffusion;
             }
             
