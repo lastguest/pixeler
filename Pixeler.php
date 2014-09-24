@@ -100,8 +100,8 @@ class PixelerMatrix {
     $dots_r_4096 = $dots_r % 4096;
 
     // Print UTF-8 character
-    return chr(224 + (($dots_r - $dots_r_4096) >> 12 ))
-         . chr(128 + (($dots_r_4096 - $dots_r_64) >> 6 ))
+    return chr(224 + (($dots_r - $dots_r_4096)    >> 12 ))
+         . chr(128 + (($dots_r_4096 - $dots_r_64) >> 6  ))
          . chr(128 + $dots_r_64); 
   }
 
@@ -151,35 +151,39 @@ class PixelerImage extends PixelerMatrix {
     // Adapted from : https://gist.github.com/lordastley/1342627
 
     $pixels = new \SplFixedArray($w * $h);
-    for($y=0; $y < $h; $y++){
-        for($x=0; $x < $w; $x++){
-            $pixels[$x + $y * $w] = imagecolorat($im, $x, $y);
+    for($y = $h ; $y-- ;){
+      for($x = $w, $y0 = $y * $w ; $x-- ;){
+            $pixels[$x + $y0] = imagecolorat($im, $x, $y);
         }
     }
     imagedestroy($im);
 
-    $c1_8 = 1/8;
     $tresh = (0xffffff * $weight) & 0xffffff;
     for ($y=0; $y < $h; $y++){
         $y0 = $y * $w; $y1 = ($y + 1) * $w; $y2 = ($y + 2) * $w;
-        for ($x=0; $x < $w; $x++){
-            $old = $pixels[$x + $y * $w];
+        for ($x=0; $x < $w; $x++) {
+            $idx = $x + $y0;
+            $old = $pixels[$idx];
 
             if ($old > $tresh){
-                $new = 0xffffff;
+                $error_diffusion = ($old - 0xffffff) >> 3;
             } else {
-                $new = 0x000000;
-                $this->matrix[$x + $y0] = true;
+                $error_diffusion = $old >> 3;
+                $this->matrix[$idx] = true;
             }
-            
-            $error_diffusion = $c1_8 * ($old - $new);
             
             $x1 = $x + 1; $x2 = $x + 2; $x_1 = $x - 1;
             
-            foreach([$x1 + $y0, $x2 + $y0, $x_1 + $y1, $x + $y1, $x1 + $y1, $x + $y2] as $ofs) {
+            foreach([
+                $x1  + $y0,
+                $x2  + $y0,
+                $x_1 + $y1,
+                $x   + $y1,
+                $x1  + $y1,
+                $x   + $y2,
+            ] as $ofs) {
               if (isset($pixels[$ofs])) $pixels[$ofs] += $error_diffusion;
-            }
-            
+            }            
         }
     }   
   }
