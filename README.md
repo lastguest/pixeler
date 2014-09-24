@@ -60,7 +60,7 @@ $ php composer.phar install -o
 
 ### Example
 
-Create a file `pixeler.php` :
+Create a file `pixel.php` :
 
 ```php
 <?php
@@ -82,5 +82,10 @@ echo Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
 ```
 
 ```bash
-$ php pixeler.php -f http://blog.circleci.com/wp-content/uploads/2014/07/elephant.jpg -r 0.3 -w 0.5
+$ php pixel.php -f http://blog.circleci.com/wp-content/uploads/2014/07/elephant.jpg -r 0.3 -w 0.5
 ```
+
+Output:
+
+<img src="http://cl.ly/image/1W2B0i2X3f01/pixeler_demo.png" width="700" />
+
