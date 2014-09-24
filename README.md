@@ -64,20 +64,23 @@ Create a file `pixel.php` :
 
 ```php
 <?php
+
 // Vendors
 include __DIR__."/vendor/autoload.php";
 
+// Parse options from command line
 $opts = array_merge([
-	'f' => false,
-	// Resize factor 1.0 = 100%
-	'r' => 1.0,
-	// Dither treshold weight
-	'w' => 0.75,
+	'f' => false, 
+	'r' => 1.0,  // Resize factor 1.0 = 100%
+	'w' => 0.75, // Dither treshold weight
 ], getopt("f:r:w:i"));
 
+// An image file/url is required.
 $opts['f'] or die("Must specify an image file.\n");
 
+
 // The PixelerImage instance render itself if casted to a string
+
 echo Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
 ```
 
