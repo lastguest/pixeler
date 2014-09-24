@@ -2,6 +2,13 @@
 
 UTF-8 Dot matrix renderer.
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lastguest/pixeler/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lastguest/pixeler/?branch=master)
+[![Total Downloads](https://poser.pugx.org/lastguest/pixeler/downloads.svg)](https://packagist.org/packages/lastguest/pixeler)
+[![Latest Stable Version](https://poser.pugx.org/lastguest/pixeler/v/stable.svg)](https://packagist.org/packages/lastguest/pixeler)
+[![Latest Unstable Version](https://poser.pugx.org/lastguest/pixeler/v/unstable.svg)](https://packagist.org/packages/lastguest/pixeler)
+[![License](https://poser.pugx.org/lastguest/pixeler/license.svg)](https://packagist.org/packages/lastguest/pixeler)
+
+
 ```
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -33,7 +40,26 @@ UTF-8 Dot matrix renderer.
 ⠿⠾⠽⠳⠯⠿⠽⠳⠿⠽⠳⠿⠾⠽⠻⠽⠳⠯⠟⠷⠿⠦⠉⠿⠯⠟⠷⠿⠸⠯⠟⠿⠞⠗⠡⠾⠻⠞⠷⠿⠽⠯⠿⠽⠞⠷⠿⠽⠳⠯⠟⠿⠞⠿⠾⠽⠾⠀
 ```
 
-### Usage
+## Installation
+
+
+Add package to your **composer.json**:
+
+```json
+{
+  "require": {
+    "lastguest/pixeler": "dev-master"
+  }
+}
+```
+
+Run [composer](https://getcomposer.org/download/):
+
+```bash
+$ php composer.phar install -o
+```
+
+### Example
 
 Create a file `pixeler.php` :
 
