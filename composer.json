@@ -3,7 +3,7 @@
     "type": "library",
     "description": "UTF-8 Dot matrix renderer",
     "keywords": ["pixel","graphics","utf8","render","cli"],
-    "homepage": "http://dreamnoctis.com",
+    "homepage": "http://dreamnoctis.com/",
     "version": "1.0.0",
     "license": "MIT",
     "authors": [
@@ -13,10 +13,10 @@
         }
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.4"
     },
     "minimum-stability": "dev",
     "autoload": {
-        "classmap": [ "" ]
+        "psr-4": { "Pixeler\\" : "" }
     }
 }
