@@ -1,6 +1,10 @@
 # Pixeler
 
-UTF-8 Dot matrix renderer, now in color too.
+UTF-8 Dot matrix renderer, now in <span style="color:#ff0000">c</span>
+<span style="color:#ffff00">o</span>
+<span style="color:#00ff00">l</span>
+<span style="color:#00ffff">o</span>
+<span style="color:#0000ff">r</span> too.
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lastguest/pixeler/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lastguest/pixeler/?branch=master)
 [![Total Downloads](https://poser.pugx.org/lastguest/pixeler/downloads.svg)](https://packagist.org/packages/lastguest/pixeler)
