@@ -37,7 +37,8 @@ class Canvas {
   }
 
   public function clear(){
-    static $ESC = chr(27);
+    static $ESC;
+    $ESC or $ESC = chr(27);
     $this->screen->clear();
     echo $ESC . "[0G";
     echo $ESC . "[" . ($this->charHeight) ."A";
