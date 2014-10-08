@@ -87,7 +87,7 @@ You will see a lot of tearing, need some kind of vsync wait.
 // Vendors
 include __DIR__."/vendor/autoload.php";
 
-$screen = new Pixeler\Canvas(320,100);
+$screen = new Pixeler\Canvas(160,100);
 $sh2 = $screen->height()/2;
 $sh4 = $sh2/1.5;
 $ph = pi()/32;
