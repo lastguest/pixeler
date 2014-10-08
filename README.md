@@ -40,17 +40,21 @@ include __DIR__."/vendor/autoload.php";
 
 // Parse options from command line
 $opts = array_merge([
-	'f' => false, 
-	'r' => 1.0,  // Resize factor 1.0 = 100%
-	'w' => 0.75, // Dither treshold weight
-], getopt("f:r:w:i"));
+    'f' => false, 
+    'r' => 1.0,  // Resize factor 1.0 = 100%
+    'w' => 0.75, // Dither treshold weight
+], getopt("f:r:w:ib"));
 
 // An image file/url is required.
-$opts['f'] or die("Must specify an image file.\n");
+$opts['f'] || die("Must specify an image file.\n");
+
+$image = Pixeler\Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
+
+// No colors if "-b" is passed
+isset($opts['b']) && $image->clearColors();
 
 // The Pixeler\Image instance render itself if casted to a string
-
-echo Pixeler\Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
+echo $image;
 ```
 
 
