@@ -71,7 +71,7 @@ $ php pixel.php -f http://flippywall.com/wp-content/uploads/2014/07/Manga-Girl-W
 <img src="http://drop.caffeina.co/image/471V2N1J1R1r/pixlr-color.png" width="700" />
 
 ```bash
-$ php pixel.php -f http://blog.circleci.com/wp-content/uploads/2014/07/elephant.jpg -r 0.3 -w 0.5
+$ php pixel.php -f http://blog.circleci.com/wp-content/uploads/2014/07/elephant.jpg -r 0.3 -w 0.5 -b
 ```
 
 <img src="http://cl.ly/image/1W2B0i2X3f01/pixeler_demo.png" width="700" />
