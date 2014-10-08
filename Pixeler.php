@@ -152,9 +152,8 @@ class Matrix {
          . chr(128 + (($dots_r_4096 - $dots_r_64) >> 6  ))
          . chr(128 + $dots_r_64);
       }
-      echo "\n";
+      echo $ESC."[0\n";
     }
-    echo $ESC."[0";
     $buffer = ob_get_contents();
     ob_end_clean();
     return $buffer;
