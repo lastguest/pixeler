@@ -40,8 +40,8 @@ class Canvas {
     static $ESC;
     $ESC or $ESC = chr(27);
     $this->screen->clear();
-    echo $ESC . "[0G";
-    echo $ESC . "[" . ($this->charHeight) ."A";
+    $h = $this->charHeight +1;
+    echo $ESC,'[0G',$ESC,'[',$h,'A';
   }
   
   public function setPixel($x,$y,$c=1){
@@ -79,6 +79,10 @@ class Matrix {
     $this->colors   = new \SplFixedArray($this->csize);
   }
 
+  public function clearColors() {
+    $this->colors   = new \SplFixedArray($this->csize);
+  }
+
   public function clear() {
     $this->matrix   = new \SplFixedArray($this->size);
     $this->colors   = new \SplFixedArray($this->csize);
@@ -87,17 +91,15 @@ class Matrix {
   public function setPixel($x, $y, $value = true,$color = null){
     $y = (int)$y; $x = (int)$x;
     if ( $x < $this->width && $y < $this->height) {
-      $idx = $x + $y * $this->width;
-      $this->matrix[$idx] = !! $value;
-      $this->colors[$idx] = $color;
+      $this->matrix[$x + $y * $this->width] = !! $value;
+      $this->colors[$x>>1 + ($y>>2) * $this->width] = $color;
     }
   }
 
   public function getPixel($x, $y){
     $y = (int)$y; $x = (int)$x;
     if ( $x < $this->width && $y < $this->height) {
-      $idx = $x + $y * $this->width;
-      return [ $this->matrix[$idx], $this->colors[$idx] ];
+      return [ $this->matrix[$x + $y * $this->width], $this->colors[$x + $y * $this->width] ];
     } else {
       return false;
     }
