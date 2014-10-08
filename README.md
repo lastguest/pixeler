@@ -76,3 +76,35 @@ $ php pixel.php -f http://blog.circleci.com/wp-content/uploads/2014/07/elephant.
 
 <img src="http://cl.ly/image/1W2B0i2X3f01/pixeler_demo.png" width="700" />
 
+
+### Animation Example
+
+You will see a lot of tearing, need some kind of vsync wait.
+
+```php
+<?php
+
+// Vendors
+include __DIR__."/vendor/autoload.php";
+
+$screen = new Pixeler\Canvas(320,100);
+$sh2 = $screen->height()/2;
+$sh4 = $sh2/1.5;
+$ph = pi()/32;
+$i = 0;
+
+// To exit, press Ctr-C
+while(1){
+  $screen->clear();
+  for ($x=0,$c=$screen->width(); $x < $c; $x++){
+    $y = $sh4*sin($i++/128 + $ph*$x);
+    $screen->setPixel($x,$sh2 + $y);
+    $screen->setPixel($x,$sh2 + $y/2);
+    $screen->setPixel($x,$sh2 + $y/4);
+    $screen->setPixel($x,$sh2);
+  }
+  echo $screen;
+}
+```
+
+<img src="http://f.cl.ly/items/3P212W0G0S0m0s1d3w1r/code.gif" width="700" />
