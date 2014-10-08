@@ -1,6 +1,6 @@
 # Pixeler
 
-UTF-8 Dot matrix renderer.
+UTF-8 Dot matrix renderer, now in color too.
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lastguest/pixeler/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lastguest/pixeler/?branch=master)
 [![Total Downloads](https://poser.pugx.org/lastguest/pixeler/downloads.svg)](https://packagist.org/packages/lastguest/pixeler)
@@ -78,10 +78,9 @@ $opts = array_merge([
 // An image file/url is required.
 $opts['f'] or die("Must specify an image file.\n");
 
+// The Pixeler\Image instance render itself if casted to a string
 
-// The PixelerImage instance render itself if casted to a string
-
-echo Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
+echo Pixeler\Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
 ```
 
 ```bash
