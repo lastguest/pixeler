@@ -23,6 +23,14 @@ class Pixeler {
     return new Matrix($width, $height);
   }
 
+  public static function hide_cursor(){
+      echo chr(27).'[?25l';
+  }
+  
+  public static function show_cursor(){
+      echo chr(27).'[?25h';
+  }
+
 }
 
 class Canvas {
@@ -36,12 +44,12 @@ class Canvas {
     $this->charHeight = ceil($h/4);
   }
 
-  public function clear(){
+  public function clear($clear=true){
     static $ESC;
     $ESC or $ESC = chr(27);
     $this->screen->clear();
     $h = $this->charHeight +1;
-    echo $ESC,'[0G',$ESC,'[',$h,'A';
+    echo $ESC,'[',$h,'A';
   }
   
   public function setPixel($x,$y,$c=1){
@@ -150,7 +158,7 @@ class Matrix {
 
         // Print UTF-8 character and color
         echo 
-           $ESC.'[38;5;'.($c[$cy0+$cx]?:255).'m'
+         $ESC.'[' . ($c[$cy0+$cx]?'38;5;'.$c[$cy0+$cx]:39).'m'
          . chr(224 + (($dots_r - $dots_r_4096)    >> 12 ))
          . chr(128 + (($dots_r_4096 - $dots_r_64) >> 6  ))
          . chr(128 + $dots_r_64);
@@ -175,25 +183,24 @@ class Image extends Matrix {
     if ($ext == 'jpg') $ext = 'jpeg';
     $imagecreator = 'imagecreatefrom' . $ext;
 
-    if (!function_exists($imagecreator)) throw new \Exception("Image format not supported.", 1);
+    if (!function_exists($imagecreator)) 
+      throw new \Exception('Image format not supported.', 1);
 
     $im = $imagecreator($img);
     $w  = imagesx($im);
     $h  = imagesy($im);
 
     // Resize image
-    if ( $resize != 1.0 ){
-      $nw      = ceil($resize * $w);
-      $nh      = ceil($resize * $h);
-      $new_img = imagecreatetruecolor($nw, $nh);
-      imagesavealpha     ($new_img, true);
-      imagealphablending ($new_img, false);
-      imagefill          ($new_img, 0, 0, imagecolorallocate($new_img, 255, 255, 255));
-      imagecopyresized   ($new_img, $im, 0, 0, 0, 0, $nw, $nh, $w, $h);
-      imagedestroy       ($im);
-      $im = $new_img;
-      $w = $nw; $h = $nh;
-    }
+    $nw       = ceil($resize * $w);
+    $nh       = ceil($resize * $h * 0.75);
+    $new_img  = imagecreatetruecolor($nw, $nh);
+    imagesavealpha     ($new_img, true);
+    imagealphablending ($new_img, false);
+    imagefill          ($new_img, 0, 0, imagecolorallocate($new_img, 255, 255, 255));
+    imagecopyresized   ($new_img, $im, 0, 0, 0, 0, $nw, $nh, $w, $h);
+    imagedestroy       ($im);
+    $im = $new_img;
+    $w = $nw; $h = $nh;
 
     // Init Dot Matrix
     parent::__construct($w, $h);
