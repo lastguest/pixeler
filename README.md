@@ -46,9 +46,11 @@ $opts = array_merge([
     'w' => 0.75, // Dither treshold weight
 ], getopt("f:r:w:ib"));
 
+
 // An image file/url is required.
 $opts['f'] || die("Must specify an image file.\n");
 
+// The -i option inverts the image
 $image = Pixeler\Pixeler::image($opts['f'], $opts['r'], isset($opts['i']), $opts['w']);
 
 // No colors if "-b" is passed
