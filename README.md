@@ -1,6 +1,6 @@
 # Pixeler
 
-UTF-8 Dot matrix renderer, now in color too.
+Render images in CLI with UTF-8 characters.
 
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lastguest/pixeler/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lastguest/pixeler/?branch=master)
@@ -13,23 +13,22 @@ UTF-8 Dot matrix renderer, now in color too.
 
 ## Installation
 
-Add package to your **composer.json**:
-
-```json
-{
-  "require": {
-    "lastguest/pixeler": "dev-master"
-  }
-}
-```
-
-Run [composer](https://getcomposer.org/download/):
+Require in your project with [composer](https://getcomposer.org/download/) :
 
 ```bash
-$ php composer.phar install -o
+$ composer require lastguest/pixeler:"*"
 ```
 
-### Example
+This will also install a **pixeler** tool in : 
+
+```
+your_project_dir/vendor/bin/pixeler
+```
+
+It works exactly like the example below.
+
+
+### Example 
 
 Create a file `pixel.php` :
 
