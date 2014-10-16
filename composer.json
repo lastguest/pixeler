@@ -18,5 +18,6 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": { "Pixeler\\" : "" }
-    }
+    },
+    "bin": ["bin/pixeler"]
 }
