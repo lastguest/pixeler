@@ -1,9 +1,9 @@
 {
     "name": "lastguest/pixeler",
     "type": "library",
-    "description": "UTF-8 Dot matrix renderer",
-    "keywords": ["pixel","graphics","utf8","render","cli"],
-    "homepage": "http://dreamnoctis.com/",
+    "description": "CLI Image renderer",
+    "keywords": ["pixel","graphics","utf8","render","cli","image"],
+    "homepage": "https://github.com/lastguest/pixeler",
     "version": "1.0.0",
     "license": "MIT",
     "authors": [
@@ -15,9 +15,12 @@
     "require": {
         "php": ">=5.4"
     },
-    "minimum-stability": "dev",
+    "config": {
+    "preferred-install": "dist"
+  },
+  "minimum-stability": "stable",
     "autoload": {
-        "psr-4": { "Pixeler\\" : "" }
+        "psr-4": { "Pixeler\\" : "src/Pixeler/" }
     },
     "bin": ["bin/pixeler"]
 }
