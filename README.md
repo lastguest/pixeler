@@ -62,7 +62,7 @@ echo $image;
 
 
 ```bash
-$ php -f http://drop.caffeina.co/image/160L0Y3C0a29/vocaloid.jpg -r .25 -w 0.25 -i
+$ php pixel.php -f http://drop.caffeina.co/image/160L0Y3C0a29/vocaloid.jpg -r .25 -w 0.25 -i
 ```
 
 <img src="http://drop.caffeina.co/image/1B133A0N3V0c/vocal.png" width="700" />
