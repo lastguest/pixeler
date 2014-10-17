@@ -16,7 +16,7 @@ Render images in CLI with UTF-8 characters.
 Require in your project with [composer](https://getcomposer.org/download/) :
 
 ```bash
-$ composer require lastguest/pixeler:"*"
+$ composer require lastguest/pixeler
 ```
 
 This will also install a **pixeler** tool in : 
