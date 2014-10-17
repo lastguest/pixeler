@@ -14,8 +14,10 @@
 namespace Pixeler;
 
 class Image extends Matrix {
+  const DITHER_NONE = 0,
+        DITHER_ERROR = 1;
 
-  public function __construct($img, $resize=1.0, $invert=false, $weight = 0.5){
+  public function __construct($img, $resize=1.0, $invert=false, $weight = 0.5, $dither=self::DITHER_ERROR){
     $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
     if ($ext == 'jpg') $ext = 'jpeg';
     $imagecreator = 'imagecreatefrom' . $ext;
@@ -130,8 +132,6 @@ class Image extends Matrix {
     // Invert image for dark backgrounds
     if ($invert) imagefilter($im, IMG_FILTER_NEGATE);
 
-    // Dither image with 1-bit Atkinson Dithering
-    // Adapted from : https://gist.github.com/lordastley/1342627
 
     $pixels = new \SplFixedArray($w * $h);
     for($y = $h ; $y-- ;){
@@ -141,35 +141,59 @@ class Image extends Matrix {
     }
     imagedestroy($im);
 
-    $tresh = (0xffffff * $weight) & 0xffffff;
     $m = $this->matrix;
-    for ($y=0; $y < $h; $y++){
-        $y0 = $y * $w; $y1 = $y0 + $w; $y2 = $y1 + $w;
-        for ($x=0; $x < $w; $x++) {
-            $idx = $x + $y0;
-            $old = $pixels[$idx];
+    switch($dither){
 
-            if ($old > $tresh){
-                $error_diffusion = ($old - 0xffffff) >> 3;
-            } else {
-                $error_diffusion = $old >> 3;
-                $m[$idx] = $old;
-            }
+      // Threshold 1-bit quantization
+      case self::DITHER_NONE:
+      default:
+        $tresh = (0xffffff * $weight) & 0xffffff;
+        $b = $invert?1:0;
+        for ($y=0; $y < $h; $y++){
+            $y0 = $y * $w; $y1 = $y0 + $w; $y2 = $y1 + $w;
+            for ($x=0; $x < $w; $x++) {
+                $idx = $x + $y0;
+                $m[$idx] = $pixels[$idx]<=$tresh?$pixels[$idx]:$b;
+              }
+        }
+      break;
 
-            $x1 = $x + 1; $x2 = $x + 2; $x_1 = $x - 1;
+      // Dither image with 1-bit Atkinson Dithering
+      // Adapted from : https://gist.github.com/lordastley/1342627
+      case self::DITHER_ERROR:
+        $tresh = (0xffffff * $weight) & 0xffffff;
+        for ($y=0; $y < $h; $y++){
+            $y0 = $y * $w; $y1 = $y0 + $w; $y2 = $y1 + $w;
+            for ($x=0; $x < $w; $x++) {
+                $idx = $x + $y0;
+                $old = $pixels[$idx];
+                
+                if ($old > $tresh){
+                    $error_diffusion = ($old - 0xffffff) >> 3;
+                } else {
+                    $error_diffusion = $old >> 3;
+                    $m[$idx] = $old;
+                }
 
-            foreach([
-                $x1  + $y0,
-                $x2  + $y0,
-                $x_1 + $y1,
-                $x   + $y1,
-                $x1  + $y1,
-                $x   + $y2,
-            ] as $ofs) {
-              if (isset($pixels[$ofs])) $pixels[$ofs] += $error_diffusion;
+
+                $x1 = $x + 1; $x2 = $x + 2; $x_1 = $x - 1;
+
+                foreach([
+                    $x1  + $y0,
+                    $x2  + $y0,
+                    $x_1 + $y1,
+                    $x   + $y1,
+                    $x1  + $y1,
+                    $x   + $y2,
+                ] as $ofs) {
+                  if (isset($pixels[$ofs])) $pixels[$ofs] += $error_diffusion;
+                }
             }
         }
+
+      break;
     }
+
   }
 
 }

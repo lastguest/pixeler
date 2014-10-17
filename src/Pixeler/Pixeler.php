@@ -15,8 +15,8 @@ namespace Pixeler;
 
 class Pixeler {
 
-  public static function image($image_url, $resize_factor = 1.0, $invert = false, $weight = 0.5){
-    return new Image($image_url, $resize_factor, $invert, $weight);
+  public static function image($image_url, $resize_factor = 1.0, $invert = false, $weight = 0.5, $mode = Image::DITHER_ERROR){
+    return new Image($image_url, $resize_factor, $invert, $weight, $mode);
   }
 
   public static function dots($width, $height){
