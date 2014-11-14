@@ -1,4 +1,5 @@
 # Pixeler
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/lastguest/pixeler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Render images in CLI with UTF-8 characters.
 
