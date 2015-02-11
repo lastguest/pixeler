@@ -119,3 +119,7 @@ while(1){
 ```
 
 <img src="http://f.cl.ly/items/3P212W0G0S0m0s1d3w1r/code.gif" width="700" />
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/lastguest/pixeler/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
