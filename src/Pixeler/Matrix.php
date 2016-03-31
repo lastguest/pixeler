@@ -30,6 +30,10 @@ class Matrix {
     $this->colors   = new \SplFixedArray($this->csize);
   }
 
+  public function setData(array $data) {
+    $this->matrix   = \SplFixedArray::fromArray(array_slice($data,0,$this->size),false);
+  }
+  
   public function clearColors() {
     $this->colors   = new \SplFixedArray($this->csize);
   }
