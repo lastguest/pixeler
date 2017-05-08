@@ -1,5 +1,5 @@
 # Pixeler
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/lastguest/pixeler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lastguest/pixeler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Render images in CLI with UTF-8 characters.
 
@@ -119,7 +119,3 @@ while(1){
 ```
 
 <img src="http://f.cl.ly/items/3P212W0G0S0m0s1d3w1r/code.gif" width="700" />
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/lastguest/pixeler/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
